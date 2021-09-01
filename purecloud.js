@@ -1,6 +1,6 @@
 // **** Token Implicit Grant (Browser) - UserLogin ****
-let redirectUri = 'https://szlaskidaniel.github.io/transcriptionAPI-clientWidget/index.html';
-//let redirectUri = 'https://localhost/index.html';
+//let redirectUri = 'https://szlaskidaniel.github.io/transcriptionAPI-clientWidget/index.html';
+let redirectUri = 'https://localhost/index.html';
 const platformClient = require('platformClient');
 const client = platformClient.ApiClient.instance;
 
@@ -47,9 +47,8 @@ client.loginImplicitGrant(myParams.oauth, redirectUri, { state: myParams })
         notificationsApi.putNotificationsChannelSubscriptions(notificationChannel.id, body).then((data) => {
             console.log('Subscribed !', data);     
             // $('#myTable').append(`<tr><td><small class="text-success"><i class="bi-box"></i></small></td><td style="padding-left: 20px"><small class="text-muted">waiting for transcription...</small></td></tr>`);                                                       
-            $('#myTable').append(`<tr><td><small class="text-success"><img src="loader.gif" alt="This is an animated gif image" width=15/></small></td><td style="padding-left: 20px"><small class="text-muted">waiting for transcription...</small></td></tr>`);                                                       
+            $('#myTable').append(`<tr><td><small class="text-success"><img src="loader.gif" alt="This is an animated gif image" width=15/></small></td><td style="padding-left: 20px"><small class="text-muted">waiting for transcription...</small></td></tr>`);                                                                   
             
-
         }).catch((err) => {  console.log(err)   });
 
         
@@ -89,10 +88,13 @@ function handleNotification(message) {
             document.getElementById("myTable").deleteRow(0);
             waitingLabel = false;
         };
+        deleteLastrow('myTable');
         transcripts.forEach(element => {
             let icon = element.channel.toLowerCase() === 'internal' ? '<i class="bi bi-headset"></i>' : '<i class="bi bi-telephone-outbound-fill"></i>';
             $('#myTable').append(`<tr><td><small class="text-muted">${icon}</small></td><td style="padding-left: 20px">${element.alternatives[0].transcript}</td></tr>`);            
         });
+        $('#myTable').append(`<tr><td style="padding-top: 20px"><small class="text-success"><img src="loader2.gif" alt="This is an animated gif image" width=15/></small></td><td></td></tr>`);                                                                   
+
     }
 	
 }
@@ -109,3 +111,9 @@ function getUrlVars() {
     return vars;
 }
 
+function deleteLastrow(tableID) {
+    var table = document.getElementById(tableID);
+    var rowCount = table.rows.length;
+
+    table.deleteRow(rowCount -1);
+}
