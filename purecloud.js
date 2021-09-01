@@ -16,8 +16,18 @@ let myParams = {
     oauth: getUrlVars()['oauth']
 };
 
-
 console.log(myParams);
+
+if (!myParams.env || !myParams.oauth || !myParams.conversationId) {
+    myParams.conversationId = localStorage.getItem('custom_conversationId');
+    myParams.oauth = localStorage.getItem('custom_oauth');
+    myParams.env = localStorage.getItem('custom_env');
+} else if (myParams.conversationId && myParams.env && myParams.oauth){
+    localStorage.setItem('custom_conversationId', myParams.conversationId);
+    localStorage.setItem('custom_oauth', myParams.oauth);
+    localStorage.setItem('custom_env', myParams.env);
+}
+
 if (myParams.env)
     client.setEnvironment(myParams.env);
 
@@ -26,12 +36,15 @@ client.setPersistSettings(true);
 client.loginImplicitGrant(myParams.oauth, redirectUri, { state: myParams })
 .then((data) => {
     // Make request to GET /api/v2/users/me?expand=presence
-    console.log('Logged-In'); 
-    myParams = data.state;
-    console.log(data.state);
+    console.log('Logged-In');
 
-    //window.history.pushState("object or string", "Title", `?conversationId=${myParams.conversationId}&env=${myParams.env}`);
+    myParams.conversationId = localStorage.getItem('custom_conversationId');
+    myParams.oauth = localStorage.getItem('custom_oauth');
+    myParams.env = localStorage.getItem('custom_env');
 
+   
+    console.log(myParams);
+    
     if (!myParams.conversationId) return;
     notificationsApi.postNotificationsChannels().then((channel) => {
         console.log('channel: ', channel);
